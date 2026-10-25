@@ -65,9 +65,33 @@ def allocate(payload: dict):
 
     allocation = solve(students, seats)
 
+    def make_statistics(assigned_rows, valid_plan):
+        allocated = len(assigned_rows) if valid_plan else 0
+
+        return {
+            "total_students": len(students),
+            "allocated_students": allocated,
+            "remaining_students": len(students) - allocated,
+            "seat_capacity": len(seats),
+            "empty_seats": len(seats) - allocated if valid_plan else None,
+            "rooms_used": (
+                len({item["room"] for item in assigned_rows})
+                if valid_plan else 0
+            ),
+            "students_needing_access": sum(
+                student["needs_access"] for student in students
+            ),
+            "accessible_students_seated": sum(
+                item["needs_access"] and item["accessible"]
+                for item in assigned_rows
+            ) if valid_plan else 0,
+            "accessible_seats": sum(seat["accessible"] for seat in seats)
+        }
+
     if allocation is None:
         return {
             "ok": False,
+            "statistics": make_statistics([], False),
             "conflicts": explain_failure(students, seats)
         }
 
@@ -84,7 +108,7 @@ def allocate(payload: dict):
             "accessible": seat["accessible"]
         })
 
-    # Independent validation of the completed allocation.
+    #independent validation of the completed allocation.
     problems = []
 
     if len(results) != len(students):
@@ -115,10 +139,16 @@ def allocate(payload: dict):
                 )
 
     if problems:
-        return {"ok": False, "conflicts": problems}
+        return {"ok": False, 
+                "statistics": make_statistics(results, False),
+                "conflicts": problems
+                }
+    
+    statistics = make_statistics(results, True)
 
     return {
         "ok": True,
         "allocation": results,
+        "statistics": statistics,
         "message": "Allocation found and validated."
     }

@@ -2,6 +2,7 @@ const button = document.getElementById("allocate");
 const status = document.getElementById("status");
 const results = document.getElementById("results");
 const output = document.getElementById("output");
+const statistics = document.getElementById("statistics");
 
 function readStudents() {
   const lines = document.getElementById("students").value
@@ -88,6 +89,36 @@ function showChart(allocation, roomCount, rows, cols) {
   }
 }
 
+function showStatistics(stats) {
+    statistics.replaceChildren();
+  
+    const items = [
+      ["Total students", stats.total_students],
+      ["Allocated in valid plan", stats.allocated_students],
+      ["Still unallocated", stats.remaining_students],
+      ["Seat capacity", stats.seat_capacity],
+      ["Empty seats", stats.empty_seats ?? "—"],
+      ["Rooms used", stats.rooms_used],
+      ["Accessibility needs", stats.students_needing_access],
+      ["Accessible students seated", stats.accessible_students_seated],
+      ["Accessible seats", stats.accessible_seats]
+    ];
+  
+    for (const [label, value] of items) {
+      const card = document.createElement("div");
+      card.className = "stat-box";
+  
+      const heading = document.createElement("span");
+      heading.textContent = label;
+  
+      const number = document.createElement("strong");
+      number.textContent = value;
+  
+      card.append(heading, number);
+      statistics.appendChild(card);
+    }
+  }
+
 button.addEventListener("click", async () => {
   status.textContent = "Working…";
   results.classList.remove("hidden");
@@ -109,6 +140,9 @@ button.addEventListener("click", async () => {
     });
 
     const data = await response.json();
+    if (data.statistics) {
+        showStatistics(data.statistics);
+      }
 
     if (!response.ok) {
       throw new Error(data.detail || "The request could not be processed.");

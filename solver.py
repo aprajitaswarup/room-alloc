@@ -108,6 +108,21 @@ def explain_failure(students, seats):
             "A solution exists if the accessible-seat restriction is relaxed."
         )
 
+    both_relaxed = solve(
+        students,
+        seats,
+        enforce_groups=False,
+        enforce_access=False
+    )
+
+    if (both_relaxed is not None
+            and group_relaxed is None
+            and access_relaxed is None):
+        reasons.append(
+            "The group-separation and accessibility rules conflict when "
+            "applied together."
+        )
+
     if not reasons:
         reasons.append(
             "No solution found. The rules may conflict in combination."
