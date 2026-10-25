@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Room Allocation System</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">CONSTRAINT SATISFACTION PROJECT</p>
+      <h1>Room Allocation System</h1>
+      <p class="subtitle">
+        Build a seating plan while respecting group and accessibility rules.
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>Room layout</h2>
+
+      <div class="fields">
+        <label>
+          Number of rooms
+          <input id="room-count" type="number" min="1" value="2">
+        </label>
+        <label>
+          Rows in each room
+          <input id="rows" type="number" min="1" value="3">
+        </label>
+        <label>
+          Seats in each row
+          <input id="cols" type="number" min="1" value="4">
+        </label>
+      </div>
+
+      <label>
+        Accessible seat positions
+        <input id="accessible" value="1,1; 3,1">
+      </label>
+      <p class="hint">
+        Write row,column pairs separated by semicolons.
+        Example: <code>1,1; 3,1</code> means row 1, seat 1 and row 3, seat 1
+        in each room.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Students</h2>
+      <label for="students">One student per line: ID, group, access</label>
+      <textarea id="students" rows="8">S01, A, yes
+S02, A, no
+S03, B, no
+S04, B, no
+S05, A, no
+S06, C, yes
+S07, C, no
+S08, B, no</textarea>
+      <p class="hint">For access, enter yes or no.</p>
+
+      <button id="allocate">Generate seating plan</button>
+      <p id="status" role="status"></p>
+    </section>
+
+    <section id="results" class="card hidden">
+      <h2>Result</h2>
+      <div id="output"></div>
+    </section>
+
+    <footer>Backtracking search · Forward checking · CSP</footer>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
